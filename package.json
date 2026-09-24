@@ -1,0 +1,35 @@
+{
+  "name": "tab-organizer",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite build --watch",
+    "typecheck": "tsc --noEmit",
+    "build": "npm run typecheck && vite build",
+    "test": "vitest run",
+    "test:e2e": "npm run build && tsx test/e2e/organize.e2e.ts",
+    "package": "npm run typecheck && tsx scripts/package.ts",
+    "store-assets": "tsx scripts/store-assets.ts",
+    "icons": "tsx scripts/render-icons.ts",
+    "check": "npm run typecheck && npm test && npm run package"
+  },
+  "devDependencies": {
+    "@types/chrome": "^0.3.0",
+    "@types/node": "^26.6.2",
+    "puppeteer": "^25.12.0",
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.0",
+    "vitest": "^5.0.1"
+  },
+  "description": "Chrome extension that sorts your open tabs into named tab groups using TypeSafe's Jev (bring your own key).",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Piyusinha/ai-tab-organizer.git"
+  },
+  "license": "MIT",
+  "engines": {
+    "node": ">=22.12"
+  }
+}

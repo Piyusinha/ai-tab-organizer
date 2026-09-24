@@ -1,0 +1,144 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Tab Organizer Settings</title>
+    <link rel="stylesheet" href="../ui.css" />
+    <link rel="stylesheet" href="./options.css" />
+  </head>
+  <body>
+    <main>
+      <header class="hero">
+        <div class="logo" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="4" width="7" height="7" rx="2" /><rect x="14" y="4" width="7" height="7" rx="2" />
+            <rect x="3" y="14" width="7" height="7" rx="2" /><rect x="14" y="14" width="7" height="7" rx="2" />
+          </svg>
+        </div>
+        <div>
+          <h1>Tab Organizer</h1>
+          <p class="sub">Sort your open tabs into folders with one click.</p>
+        </div>
+        <div id="status" class="status"></div>
+      </header>
+
+      <!-- Step 1 -->
+      <section class="card">
+        <div class="step-head">
+          <span class="step">1</span>
+          <div>
+            <h2>Connect</h2>
+            <p class="hint">Choose a provider and paste your API key.</p>
+          </div>
+        </div>
+
+        <div class="combo" id="combo">
+          <button id="providerBtn" class="combo-btn" aria-haspopup="listbox" aria-expanded="false">
+            <span id="providerLabel" class="combo-label"></span>
+            <svg class="chev" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6" /></svg>
+          </button>
+          <div class="combo-panel" id="providerPanel" hidden>
+            <input id="providerSearch" placeholder="Search providers" autocomplete="off" />
+            <ul id="providerList" role="listbox"></ul>
+          </div>
+        </div>
+
+        <div class="field">
+          <div class="field-top">
+            <label for="apiKey" id="keyLabel">API key</label>
+            <a id="keyLink" target="_blank" rel="noreferrer">Get a key ↗</a>
+          </div>
+          <div class="input-wrap">
+            <input id="apiKey" type="password" autocomplete="off" spellcheck="false" placeholder="Paste your key" />
+            <button id="reveal" class="icon-btn" title="Show key" aria-label="Show key">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z" /><circle cx="12" cy="12" r="3" /></svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="field" id="accountField" hidden>
+          <label for="accountId">Account ID</label>
+          <input id="accountId" autocomplete="off" spellcheck="false" placeholder="Found in your Cloudflare dashboard" />
+        </div>
+
+        <div class="test-row">
+          <button id="test">Test connection</button>
+          <span id="testResult" class="pill" hidden></span>
+        </div>
+
+        <label class="switch-row">
+          <span>
+            <b>Use backups</b>
+            <small>If this provider is down, try your other connected providers.</small>
+          </span>
+          <input type="checkbox" id="failover" class="switch" />
+        </label>
+
+        <details class="advanced">
+          <summary>Advanced</summary>
+          <div class="field">
+            <label for="model">Model</label>
+            <input id="model" autocomplete="off" spellcheck="false" />
+          </div>
+        </details>
+      </section>
+
+      <!-- Step 2 -->
+      <section class="card">
+        <div class="step-head">
+          <span class="step">2</span>
+          <div>
+            <h2>Folders</h2>
+            <p class="hint">Tabs are sorted into these folders. Anything that doesn't fit goes to <b>Other</b>.</p>
+          </div>
+        </div>
+        <ul id="folders" class="folders"></ul>
+        <div class="folder-actions">
+          <button id="add" class="ghost">+ Add folder</button>
+          <button id="reset" class="ghost muted-btn">Restore defaults</button>
+        </div>
+      </section>
+
+      <!-- Step 3 -->
+      <section class="card">
+        <div class="step-head">
+          <span class="step">3</span>
+          <div>
+            <h2>Preferences</h2>
+          </div>
+        </div>
+
+        <div class="pref">
+          <span>
+            <b>How picky should sorting be?</b>
+            <small>Stricter sends more unclear tabs to “Other”.</small>
+          </span>
+          <div class="segmented" id="strictness" role="radiogroup">
+            <button data-value="0.2" role="radio">Relaxed</button>
+            <button data-value="0.35" role="radio">Balanced</button>
+            <button data-value="0.55" role="radio">Strict</button>
+          </div>
+        </div>
+        <label class="switch-row">
+          <span><b>Leave pinned tabs alone</b></span>
+          <input type="checkbox" id="skipPinned" class="switch" />
+        </label>
+        <label class="switch-row">
+          <span><b>Collapse folders after sorting</b></span>
+          <input type="checkbox" id="collapse" class="switch" />
+        </label>
+        <label class="switch-row">
+          <span><b>Show tab count in folder names</b> <small>e.g. “Dev (6)”</small></span>
+          <input type="checkbox" id="showCounts" class="switch" />
+        </label>
+      </section>
+
+      <footer class="foot">
+        Changes save automatically · Costs about $0.0005 per 50 tabs · Shortcut <kbd>Alt</kbd>+<kbd>Shift</kbd>+<kbd>O</kbd>
+      </footer>
+    </main>
+    <div id="toast" class="toast" hidden>Saved</div>
+    <script type="module" src="./options.ts"></script>
+  </body>
+</html>

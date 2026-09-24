@@ -1,0 +1,46 @@
+{
+  "manifest_version": 3,
+  "name": "AI Tab Organizer",
+  "version": "1.0.0",
+  "description": "Sort your open tabs into named, colored tab groups in one click. Bring your own AI key (OpenRouter, Vercel, Cloudflare, TypeSafe).",
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "permissions": [
+    "tabs",
+    "tabGroups",
+    "storage"
+  ],
+  "host_permissions": [
+    "https://api.typesafe.ai/*",
+    "https://openrouter.ai/*",
+    "https://ai-gateway.vercel.sh/*",
+    "https://api.cloudflare.com/*"
+  ],
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "action": {
+    "default_popup": "popup/index.html",
+    "default_title": "Organize tabs",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png",
+      "48": "icons/icon48.png"
+    }
+  },
+  "options_page": "options/index.html",
+  "commands": {
+    "organize-tabs": {
+      "suggested_key": {
+        "default": "Alt+Shift+O"
+      },
+      "description": "Organize tabs in the current window"
+    }
+  },
+  "short_name": "Tab Organizer"
+}

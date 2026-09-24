@@ -1,0 +1,51 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    # This name is the required status check on `main`. Keep them in sync if you rename it.
+    name: Build & test
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      # Puppeteer is only used by the local e2e test and asset scripts.
+      PUPPETEER_SKIP_DOWNLOAD: "true"
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - run: npm ci
+
+      - name: Type check
+        run: npm run typecheck
+
+      - name: Unit tests
+        run: npm test
+
+      - name: Build extension
+        run: npx vite build
+
+      - name: Build Web Store package (no API keys)
+        run: npx tsx scripts/package.ts
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: ai-tab-organizer-${{ github.sha }}
+          path: release/*.zip
+          if-no-files-found: error

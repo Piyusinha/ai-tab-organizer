@@ -1,0 +1,42 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Tab Organizer</title>
+    <link rel="stylesheet" href="../ui.css" />
+    <style>
+      body { width: 280px; padding: 14px; }
+      header { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 12px; }
+      h1 { font-size: 14px; margin: 0; }
+      .chip {
+        display: inline-flex; align-items: center; gap: 6px; max-width: 150px;
+        font-size: 12px; font-weight: 600; padding: 3px 9px; border-radius: 999px;
+        border: 0; cursor: pointer; background: rgba(154, 103, 0, 0.14); color: #b7791f;
+      }
+      .chip span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+      .chip::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: currentColor; flex: none; }
+      .chip.ok { background: rgba(26, 127, 55, 0.12); color: #1a7f37; }
+      @media (prefers-color-scheme: dark) { .chip.ok { background: rgba(63, 185, 80, 0.14); color: #3fb950; } .chip { color: #d29922; } }
+      #organize { width: 100%; padding: 9px; }
+      .row { display: flex; gap: 8px; margin-top: 8px; }
+      .row button { flex: 1; }
+      #status { margin-top: 12px; }
+      #status:empty { display: none; }
+      footer { display: flex; justify-content: space-between; }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Tab Organizer</h1>
+      <button id="provider" class="chip" title="Change provider in Options"><span id="providerName">…</span></button>
+    </header>
+    <button id="organize" class="primary">Organize tabs</button>
+    <div class="row">
+      <button id="undo">Undo</button>
+      <button id="ungroup">Ungroup all</button>
+    </div>
+    <div id="status" class="muted"></div>
+    <footer class="muted" style="margin-top: 12px"><span>Alt+Shift+O</span><a href="#" id="options">Options</a></footer>
+    <script type="module" src="./popup.ts"></script>
+  </body>
+</html>
