@@ -76,9 +76,8 @@ docs/privacy.html privacy policy (served with GitHub Pages)
 1. **Register** a developer account at https://chrome.google.com/webstore/devconsole ($5 one-time fee).
 2. **Build:** `npm run package` → `release/ai-tab-organizer-<version>.zip`, then `npm run store-assets`.
    CI also uploads the zip as an artifact on every run.
-3. **Privacy policy:** replace `YOUR_EMAIL` in `docs/privacy.html`, then enable GitHub Pages
-   (Settings → Pages → Deploy from branch → `main` / `docs`). URL:
-   `https://piyusinha.github.io/ai-tab-organizer/privacy.html`.
+3. **Privacy policy:** hosted with GitHub Pages from `docs/` at
+   https://piyusinha.github.io/ai-tab-organizer/privacy.html (updates go live when a PR merges).
 4. **Create the item:** *New item* → upload the zip → fill in the tabs using `STORE_LISTING.md`.
 5. **Submit for review.** Reviews usually take a few days.
 
