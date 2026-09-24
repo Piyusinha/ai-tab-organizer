@@ -7,6 +7,84 @@ Tabs are classified by [Jev](https://docs.typesafe.ai), TypeSafe AI's decision m
 provider you choose: **OpenRouter**, **Vercel AI Gateway**, **Cloudflare Workers AI** or **TypeSafe**
 directly. You bring your own key; the extension has no backend.
 
+## How it works: Jev
+
+Tabs are classified by **[Jev](https://docs.typesafe.ai)**, a *System One* model from TypeSafe AI.
+Jev doesn't generate text the way ChatGPT or Claude do. You send it some data plus typed questions,
+and it returns typed answers with calibrated probabilities:
+
+```text
+state:     { tabs: [{ i: 0, title: "microsoft/TypeScript", domain: "github.com" }, …] }
+question:  tab_0 → choice: which folder fits tabs[0]?  { Dev, Work, AI, Shopping, …, Other }
+answer:    tab_0 → { choice: "Dev", probabilities: { Dev: 0.97, Work: 0.02, … }, confidence: 0.94 }
+```
+
+The extension asks **one question per tab**, all in a single request that Jev answers in parallel
+(about 70–500 ms). This design has four practical benefits:
+
+- **Only valid folders come back.** Jev can only pick from your folder names, so there is no JSON to
+  parse and no invented labels.
+- **Honest uncertainty.** Every answer has a confidence score. Tabs below your strictness setting go
+  to **Other** instead of being put in the wrong folder.
+- **Fast.** Sorting feels instant, and there are no output tokens to wait for.
+- **Cheap per token.** Jev costs **$0.042 per 1M input tokens, and output is free.**
+
+The trade-off: Jev can't invent new folder names, so you choose them in settings.
+
+### What sorting costs
+
+Measured on a real run: **21 tabs → 7,865 input tokens**, about **375 tokens per tab**. That's more
+than the tab text alone, because every per-tab question repeats the folder list.
+
+| Tabs per click | Input tokens | Cost with Jev |
+|---:|---:|---:|
+| 20 | ~7.5K | **$0.0003** |
+| 50 | ~19K | **$0.0008** |
+| 100 | ~38K | **$0.0016** |
+
+Heavy use (50 tabs, 10 times a day) costs about **$0.24 a month**. Tabs sorted in the last 24 hours
+are cached, so clicking again costs nothing. The popup doesn't show costs; check your provider's dashboard.
+
+### Compared with general-purpose LLMs
+
+The usual alternative is one chat-model prompt: "here are 50 tabs, return JSON mapping each tab to a folder".
+That prompt is about 2,000 input tokens (tab list plus instructions), and the answer is about 450 output tokens.
+
+| Model | Price per 1M tokens (input / output) | ≈ cost for 50 tabs | vs Jev |
+|---|---:|---:|---:|
+| **Jev** (this extension) | **$0.042 / free** | **$0.0008** | — |
+| GPT-5 nano | $0.05 / $0.40 | $0.0003 + reasoning tokens | ~0.4–1× |
+| Gemini 2.5 Flash-Lite | $0.10 / $0.40 | $0.0004 | ~0.5× |
+| GPT-5 mini | $0.25 / $2.00 | $0.0014 + reasoning tokens | ~2× |
+| Gemini 2.5 Flash | $0.30 / $2.50 | $0.0017 | ~2× |
+| Claude Haiku 4.5 | $1.00 / $5.00 | $0.0043 | ~5× |
+| Claude Sonnet 5 | $2.00 / $10.00 | $0.0085 | ~11× |
+
+**What the table shows:**
+- Jev is cheaper than mid-size models such as GPT-5 mini, Gemini Flash and Claude.
+- It costs about the same as the very smallest models (GPT-5 nano, Gemini Flash-Lite), or slightly more.
+- It wins on reliability, not raw price. Answers are always one of your folders and come with calibrated
+  confidence, with no JSON parsing, retries or made-up labels.
+- Reasoning models such as GPT-5 nano and mini also bill hidden "thinking" tokens as output, so their
+  real cost is usually higher than shown.
+
+Prices are list prices as of September 2026. LLM token counts are estimates for a typical prompt, and
+Jev's are measured. Sources: [TypeSafe](https://docs.typesafe.ai), [OpenRouter](https://openrouter.ai/typesafe/jev-1.13),
+[OpenAI](https://openai.com/api/pricing/), [Google](https://ai.google.dev/gemini-api/docs/pricing),
+[Anthropic](https://www.anthropic.com/pricing#api).
+
+### Where Jev runs
+
+The extension calls Jev through whichever provider you pick, using your own key, with optional
+automatic failover to your other providers:
+
+| Provider | Endpoint | Key |
+|---|---|---|
+| [OpenRouter](https://openrouter.ai/typesafe/jev-1.13) | `openrouter.ai/api/alpha/decisions` | OpenRouter API key |
+| [Vercel AI Gateway](https://vercel.com/ai-gateway/models/jev) | `ai-gateway.vercel.sh/typesafe/v1/systemone` | AI Gateway API key |
+| [Cloudflare Workers AI](https://developers.cloudflare.com/ai/models/typesafe/jev/) | `api.cloudflare.com/client/v4/accounts/{id}/ai/run` | API token + account ID |
+| [TypeSafe](https://docs.typesafe.ai/api.md) | `api.typesafe.ai/v1/systemone` | TypeSafe API key |
+
 ## Install (no coding needed)
 
 1. Go to the [**latest release**](https://github.com/Piyusinha/ai-tab-organizer/releases/latest) and download `ai-tab-organizer-<version>.zip` under **Assets**.

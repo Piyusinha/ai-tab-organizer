@@ -17,5 +17,5 @@ Download the new zip and extract it over the same folder (replace the files), th
 ### Notes
 - Works in Chrome, Edge, Brave and other Chromium browsers (use `edge://extensions`, `brave://extensions`, and so on).
 - On startup, Chrome may say that developer-mode extensions are enabled. That's expected for extensions installed from a zip.
-- You need your own API key from one of: [OpenRouter](https://openrouter.ai/settings/keys), [Vercel AI Gateway](https://vercel.com/dashboard/ai-gateway/api-keys), [Cloudflare Workers AI](https://dash.cloudflare.com/profile/api-tokens) or [TypeSafe](https://console.typesafe.ai). Sorting 50 tabs costs about $0.0005.
+- You need your own API key from one of: [OpenRouter](https://openrouter.ai/settings/keys), [Vercel AI Gateway](https://vercel.com/dashboard/ai-gateway/api-keys), [Cloudflare Workers AI](https://dash.cloudflare.com/profile/api-tokens) or [TypeSafe](https://console.typesafe.ai). Sorting 50 tabs costs less than $0.001.
 - Privacy: only tab titles and addresses are sent, and only to the provider you choose. See the [privacy policy](https://piyusinha.github.io/ai-tab-organizer/privacy.html).
