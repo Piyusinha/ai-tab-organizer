@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "AI Tab Organizer",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Sort your open tabs into named, colored tab groups in one click. Bring your own AI key (OpenRouter, Vercel, Cloudflare, TypeSafe).",
   "icons": {
     "16": "icons/icon16.png",
