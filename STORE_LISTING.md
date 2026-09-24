@@ -80,7 +80,7 @@ Leave every other category unchecked. Then certify all three statements:
 - ☑ I do not use or transfer user data for purposes that are unrelated to my item's single purpose
 - ☑ I do not use or transfer user data to determine creditworthiness or for lending purposes
 
-**Privacy policy URL:** host `docs/privacy.html` publicly (see README → Publish, step 3) and paste the link. Replace `YOUR_EMAIL` in it first.
+**Privacy policy URL:** https://piyusinha.github.io/ai-tab-organizer/privacy.html
 
 ## Distribution tab
 
