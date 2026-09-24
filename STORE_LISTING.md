@@ -47,7 +47,7 @@ Sorting is done by Jev, a fast classification model from TypeSafe AI. Use your o
 • TypeSafe
 Turn on "Use backups" and the extension switches to another provider automatically if one is down.
 
-It costs very little: about $0.0005 to sort 50 tabs, billed by your provider.
+It costs very little: less than $0.001 to sort 50 tabs, billed by your provider.
 
 PRIVATE BY DESIGN
 • Only tab titles and web addresses are sent, and only to the provider you choose
