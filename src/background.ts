@@ -1,9 +1,9 @@
 import { buildRequests, resolveAnswers, type TabInfo } from "./classify";
 import { applyGroups, undoLast, ungroupAll } from "./grouper";
-import { callJev, JEV_INPUT_PRICE } from "./jev";
+import { callJev, JEV_INPUT_PRICE, JevError } from "./jev";
 import { isConfigured, providerById, PROVIDERS } from "./providers";
 import { loadSettings } from "./settings";
-import type { Message, Reply, RunStats } from "./messages";
+import type { ErrorInfo, Message, Reply, RunStats } from "./messages";
 
 const CACHE_TTL_MS = 24 * 60 * 60 * 1000;
 
@@ -18,7 +18,7 @@ const cacheKey = (categoriesSig: string, url: string) => `c:${categoriesSig}:${u
 async function organize(windowId: number): Promise<RunStats> {
   const settings = await loadSettings();
   if (!PROVIDERS.some((p) => isConfigured(p, settings.credentials[p.id]))) {
-    throw new Error("Add a Jev provider key in Options first");
+    throw new JevError("No provider is connected yet", "not_connected");
   }
 
   const tabs: TabInfo[] = (await chrome.tabs.query({ windowId }))
@@ -89,6 +89,44 @@ async function organize(windowId: number): Promise<RunStats> {
   return stats;
 }
 
+async function describeError(err: unknown): Promise<ErrorInfo> {
+  if (!(err instanceof JevError)) {
+    console.error("[Tab Organizer]", err);
+    return {
+      title: "Something went wrong",
+      hint: String((err as Error)?.message ?? err).slice(0, 140),
+      attempts: [],
+      retry: true,
+      openOptions: false,
+    };
+  }
+  // Full provider response goes to the service-worker console only, never the popup.
+  if (err.detail) console.warn("[Tab Organizer] Jev call failed:", err.detail);
+
+  const settings = await loadSettings();
+  const connected = PROVIDERS.filter((p) => isConfigured(p, settings.credentials[p.id])).length;
+  const transient = err.kind === "unavailable" || err.kind === "rate_limit" || err.kind === "network";
+  // The chip shows the primary provider, which is always the first attempt.
+  const primaryFailed = err.attempts[0]?.provider;
+  const needsBackup = transient && connected < 2;
+
+  let hint: string;
+  if (err.kind === "not_connected") hint = "Add an API key in Options to start sorting.";
+  else if (err.kind === "auth") hint = "Check the key in Options, or pick another provider.";
+  else if (err.kind === "network") hint = "Check your internet connection and try again.";
+  else if (transient) hint = needsBackup ? "Try again in a moment, or add a backup provider in Options." : "This is usually temporary. Try again in a moment.";
+  else hint = "Try again. If it keeps happening, check your settings.";
+
+  return {
+    title: err.message,
+    hint,
+    attempts: err.attempts.length > 1 ? err.attempts.map((a) => a.message) : [],
+    retry: err.kind !== "not_connected" && err.kind !== "auth",
+    openOptions: err.kind === "not_connected" || err.kind === "auth" || needsBackup,
+    provider: primaryFailed ? providerById(primaryFailed).name : undefined,
+  };
+}
+
 async function handle(msg: Message): Promise<Reply> {
   try {
     switch (msg.type) {
@@ -101,7 +139,7 @@ async function handle(msg: Message): Promise<Reply> {
         return { ok: true };
     }
   } catch (err) {
-    return { ok: false, error: (err as Error).message };
+    return { ok: false, error: await describeError(err) };
   }
 }
 

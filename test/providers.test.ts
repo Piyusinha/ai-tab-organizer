@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { callJev, choice } from "../src/jev";
+import { callJev, choice, JevError } from "../src/jev";
 import { providerById } from "../src/providers";
 
 const req = { state: "s", questions: { q: choice("?", { A: "a", B: "b" }) } };
@@ -47,21 +47,44 @@ describe("callJev failover", () => {
 
   it("reports every provider's error when all fail", async () => {
     vi.stubGlobal("fetch", vi.fn(async () => new Response("", { status: 401 })));
-    await expect(callJev("typesafe", true, { typesafe: { apiKey: "t" }, vercel: { apiKey: "v" } }, req)).rejects.toThrow(
-      /TypeSafe: invalid API key · Vercel AI Gateway: invalid API key/,
-    );
+    const err = await callJev("typesafe", true, { typesafe: { apiKey: "t" }, vercel: { apiKey: "v" } }, req).catch((e) => e);
+    expect(err).toBeInstanceOf(JevError);
+    expect(err.message).toBe("None of your providers could sort your tabs");
+    expect(err.attempts.map((a: { message: string }) => a.message)).toEqual([
+      "TypeSafe rejected your API key",
+      "Vercel AI Gateway rejected your API key",
+    ]);
+  });
+
+  it("turns a raw 503 body into a short message and keeps the body out of it", async () => {
+    vi.useFakeTimers();
+    const body = JSON.stringify({
+      error: { message: "Service temporarily unavailable. Please try again shortly.", type: "service_unavailable_error" },
+      providerMetadata: { gateway: { routing: { originalModel: "typesafe-ai/jev" } } },
+    });
+    const fetchMock = vi.fn(async () => new Response(body, { status: 503 }));
+    vi.stubGlobal("fetch", fetchMock);
+    const pending = callJev("vercel", false, { vercel: { apiKey: "v" } }, req).catch((e) => e);
+    await vi.runAllTimersAsync(); // skip retry backoff
+    const err = await pending;
+    vi.useRealTimers();
+    expect(fetchMock).toHaveBeenCalledTimes(3); // first try + 2 retries
+    expect(err.message).toBe("Vercel AI Gateway is temporarily unavailable");
+    expect(err.kind).toBe("unavailable");
+    expect(err.message).not.toMatch(/[{}"]/);
+    expect(err.detail).toContain("Service temporarily unavailable");
   });
 
   it("does not try backups when failover is off", async () => {
     const fetchMock = vi.fn(async () => new Response("", { status: 401 }));
     vi.stubGlobal("fetch", fetchMock);
     await expect(callJev("typesafe", false, { typesafe: { apiKey: "t" }, openrouter: { apiKey: "o" } }, req)).rejects.toThrow(
-      /^TypeSafe: invalid API key$/,
+      /^TypeSafe rejected your API key$/,
     );
     expect(fetchMock).toHaveBeenCalledTimes(1);
   });
 
   it("errors clearly when the provider is not connected", async () => {
-    await expect(callJev("openrouter", false, {}, req)).rejects.toThrow(/OpenRouter: not connected/);
+    await expect(callJev("openrouter", false, {}, req)).rejects.toThrow(/OpenRouter has no API key/);
   });
 });
