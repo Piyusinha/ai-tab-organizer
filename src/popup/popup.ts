@@ -1,4 +1,4 @@
-import { send, type Reply, type RunStats } from "../messages";
+import { send, type ErrorInfo, type Reply, type RunStats } from "../messages";
 import { isConfigured, PROVIDERS, providerById } from "../providers";
 import { loadSettings } from "../settings";
 
@@ -7,8 +7,11 @@ type Ok = Extract<Reply, { ok: true }>;
 const $ = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
 const status = $("status");
 const buttons = [...document.querySelectorAll<HTMLButtonElement>("button:not(.chip)")];
+const alertBox = $("alert");
+let chipName: string | null = null;
 
 function showProvider(name: string | null, backups = 0) {
+  chipName = name;
   const chip = $("provider");
   chip.className = `chip${name ? " ok" : ""}`;
   $("providerName").textContent = name ?? "Not connected";
@@ -17,9 +20,26 @@ function showProvider(name: string | null, backups = 0) {
     : "Add an API key in Options";
 }
 
-function show(text: string, isError = false) {
+function show(text: string) {
+  alertBox.hidden = true;
   status.textContent = text;
-  status.className = isError ? "error" : "muted";
+  status.className = "muted";
+}
+
+function showError(e: ErrorInfo) {
+  status.textContent = "";
+  $("alertTitle").textContent = e.title;
+  $("alertHint").textContent = e.hint;
+  $("alertAttempts").replaceChildren(...e.attempts.map((a) => Object.assign(document.createElement("li"), { textContent: a })));
+  $("retry").hidden = !e.retry;
+  $("alertOptions").hidden = !e.openOptions;
+  // Amber for "try again later" problems, red for things the user must fix.
+  alertBox.className = `alert${e.retry ? "" : " error"}`;
+  alertBox.hidden = false;
+  if (e.provider && e.provider === chipName) {
+    $("provider").className = "chip warn";
+    $("provider").title = `${e.provider}: ${e.title}. Click to change provider.`;
+  }
 }
 
 function describe(s: RunStats): string {
@@ -33,7 +53,7 @@ async function run(label: string, action: () => ReturnType<typeof send>, done: (
   const reply = await action();
   buttons.forEach((b) => (b.disabled = false));
   if (reply.ok) show(done(reply));
-  else show(reply.error, true);
+  else showError(reply.error);
 }
 
 async function windowId() {
@@ -45,6 +65,7 @@ $("organize").addEventListener("click", async () => {
   run("Sorting tabs…", () => send({ type: "organize", windowId: id }), (r) => {
     // Show the provider that actually answered (may be a backup).
     if (r.stats?.providers.length) showProvider(r.stats.providers.join(" + "));
+    else showProvider(chipName); // answered from cache: clear any earlier warning state
     return describe(r.stats!);
   });
 });
@@ -58,7 +79,9 @@ $("ungroup").addEventListener("click", async () => {
   run("Ungrouping…", () => send({ type: "ungroup", windowId: id }), () => "All tabs ungrouped");
 });
 
-for (const id of ["options", "provider"]) {
+$("retry").addEventListener("click", () => $("organize").click());
+
+for (const id of ["options", "provider", "alertOptions"]) {
   $(id).addEventListener("click", (e) => {
     e.preventDefault();
     chrome.runtime.openOptionsPage();

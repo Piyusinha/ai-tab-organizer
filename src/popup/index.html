@@ -5,7 +5,8 @@
     <title>Tab Organizer</title>
     <link rel="stylesheet" href="../ui.css" />
     <style>
-      body { width: 280px; padding: 14px; }
+      [hidden] { display: none !important; }
+      body { width: 280px; padding: 14px; overflow-wrap: anywhere; }
       header { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 12px; }
       h1 { font-size: 14px; margin: 0; }
       .chip {
@@ -23,6 +24,28 @@
       #status { margin-top: 12px; }
       #status:empty { display: none; }
       footer { display: flex; justify-content: space-between; }
+      .chip.warn { background: rgba(207, 34, 46, 0.1); color: #cf222e; }
+      @media (prefers-color-scheme: dark) { .chip.warn { background: rgba(255, 123, 114, 0.14); color: #ff7b72; } }
+
+      .alert {
+        margin-top: 12px; padding: 10px 12px; border-radius: 10px; font-size: 12.5px;
+        background: rgba(154, 103, 0, 0.1); border: 1px solid rgba(154, 103, 0, 0.3);
+      }
+      .alert.error { background: rgba(207, 34, 46, 0.07); border-color: rgba(207, 34, 46, 0.3); }
+      .alert-head { display: flex; gap: 7px; align-items: flex-start; font-weight: 600; font-size: 13px; line-height: 1.35; }
+      .alert-head svg { flex: none; margin-top: 1px; color: #b7791f; }
+      .alert.error .alert-head svg { color: #cf222e; }
+      .alert p { margin: 4px 0 0 23px; color: var(--muted); line-height: 1.4; }
+      .alert ul { margin: 6px 0 0 23px; padding: 0; list-style: none; color: var(--muted); }
+      .alert li::before { content: "• "; }
+      .alert-actions { display: flex; gap: 6px; margin: 9px 0 0 23px; }
+      .alert-actions button { padding: 4px 10px; font-size: 12px; }
+      @media (prefers-color-scheme: dark) {
+        .alert { background: rgba(210, 153, 34, 0.1); border-color: rgba(210, 153, 34, 0.3); }
+        .alert-head svg { color: #d29922; }
+        .alert.error { background: rgba(255, 123, 114, 0.08); border-color: rgba(255, 123, 114, 0.3); }
+        .alert.error .alert-head svg { color: #ff7b72; }
+      }
     </style>
   </head>
   <body>
@@ -36,6 +59,18 @@
       <button id="ungroup">Ungroup all</button>
     </div>
     <div id="status" class="muted"></div>
+    <div id="alert" class="alert" role="alert" hidden>
+      <div class="alert-head">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 3 2 20h20L12 3Z" stroke-linejoin="round"/><path d="M12 10v4M12 17h.01"/></svg>
+        <span id="alertTitle"></span>
+      </div>
+      <p id="alertHint"></p>
+      <ul id="alertAttempts"></ul>
+      <div class="alert-actions">
+        <button id="retry" class="primary">Try again</button>
+        <button id="alertOptions">Open Options</button>
+      </div>
+    </div>
     <footer class="muted" style="margin-top: 12px"><span>Alt+Shift+O</span><a href="#" id="options">Options</a></footer>
     <script type="module" src="./popup.ts"></script>
   </body>
