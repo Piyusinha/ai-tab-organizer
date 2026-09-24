@@ -12,7 +12,8 @@
     "package": "npm run typecheck && tsx scripts/package.ts",
     "store-assets": "tsx scripts/store-assets.ts",
     "icons": "tsx scripts/render-icons.ts",
-    "check": "npm run typecheck && npm test && npm run package"
+    "check": "npm run typecheck && npm test && npm run package",
+    "demo": "npm run package && tsx scripts/demo/record.ts"
   },
   "devDependencies": {
     "@types/chrome": "^0.3.0",

@@ -50,7 +50,9 @@ jobs:
           VERSION: ${{ steps.version.outputs.version }}
         run: |
           sed "s/{{VERSION}}/$VERSION/g" .github/RELEASE_TEMPLATE.md > notes.md
-          gh release create "$GITHUB_REF_NAME" "release/ai-tab-organizer-$VERSION.zip" \
+          # Stable name so .../releases/latest/download/ai-tab-organizer.zip always points at the newest build.
+          cp "release/ai-tab-organizer-$VERSION.zip" release/ai-tab-organizer.zip
+          gh release create "$GITHUB_REF_NAME" "release/ai-tab-organizer-$VERSION.zip" release/ai-tab-organizer.zip \
             --title "AI Tab Organizer $VERSION" \
             --notes-file notes.md \
             --verify-tag

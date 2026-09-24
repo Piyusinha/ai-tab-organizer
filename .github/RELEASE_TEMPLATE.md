@@ -1,6 +1,9 @@
 ## Install in Chrome (about 1 minute)
 
-1. **Download** `ai-tab-organizer-{{VERSION}}.zip` from the **Assets** list below.
+**▶ [Watch the 35-second demo](https://piyusinha.github.io/ai-tab-organizer/demo.mp4)** · **[Setup guide with screenshots](https://github.com/Piyusinha/ai-tab-organizer#setup-2-minutes)**
+
+1. **Download** **`ai-tab-organizer.zip`** from the **Assets** list below. Don't download *Source code*, which can't be loaded into Chrome.
+   (`ai-tab-organizer-{{VERSION}}.zip` is the same file with the version in its name.)
 2. **Unzip it.** Double-click the file (macOS) or right-click → *Extract All* (Windows). Chrome can't load the `.zip` itself.
    Move the extracted folder somewhere permanent, such as `Documents/ai-tab-organizer`. Chrome loads the extension from this folder, so don't delete it.
 3. Open **`chrome://extensions`** in Chrome.

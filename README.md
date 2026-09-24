@@ -7,6 +7,19 @@ Tabs are classified by [Jev](https://docs.typesafe.ai), TypeSafe AI's decision m
 provider you choose: **OpenRouter**, **Vercel AI Gateway**, **Cloudflare Workers AI** or **TypeSafe**
 directly. You bring your own key; the extension has no backend.
 
+<p align="center">
+  <img src="docs/demo.gif" alt="Demo: install, connect Vercel AI Gateway, click Organize, and 16 real tabs are sorted into 9 folders" width="900">
+  <br>
+  <a href="https://piyusinha.github.io/ai-tab-organizer/demo.mp4"><b>▶ Watch the full demo video (35 s)</b></a>
+  · recorded with a real Chrome, real websites and real Jev results
+</p>
+
+<p align="center">
+  <a href="https://github.com/Piyusinha/ai-tab-organizer/releases/latest/download/ai-tab-organizer.zip"><b>⬇ Download ai-tab-organizer.zip</b></a>
+  · <a href="https://github.com/Piyusinha/ai-tab-organizer/releases/latest">Latest release</a>
+  · <a href="#setup-2-minutes">Setup guide</a>
+</p>
+
 ## How it works: Jev
 
 Tabs are classified by **[Jev](https://docs.typesafe.ai)**, a *System One* model from TypeSafe AI.
@@ -85,15 +98,86 @@ automatic failover to your other providers:
 | [Cloudflare Workers AI](https://developers.cloudflare.com/ai/models/typesafe/jev/) | `api.cloudflare.com/client/v4/accounts/{id}/ai/run` | API token + account ID |
 | [TypeSafe](https://docs.typesafe.ai/api.md) | `api.typesafe.ai/v1/systemone` | TypeSafe API key |
 
-## Install (no coding needed)
+## Setup (2 minutes)
 
-1. Go to the [**latest release**](https://github.com/Piyusinha/ai-tab-organizer/releases/latest) and download `ai-tab-organizer-<version>.zip` under **Assets**.
-2. **Unzip it** and move the folder somewhere permanent. Chrome loads the extension from that folder, so don't delete it.
-3. Open `chrome://extensions`, turn on **Developer mode** (top right) and click **Load unpacked**.
-4. Select the extracted folder (the one containing `manifest.json`).
-5. Pin the extension from the puzzle-piece menu. In the settings page that opens, pick a provider, paste your API key and click **Test connection**.
+You don't need to code or build anything. Download the ready-made extension and load it into Chrome.
 
-Click the icon → **Organize tabs**, or press **Alt+Shift+O**. To update, extract a newer zip over the same folder and click **↻ Reload** on the extension card.
+### 1. Download the extension
+
+Open the **[latest release](https://github.com/Piyusinha/ai-tab-organizer/releases/latest)** and, under **Assets**,
+download **`ai-tab-organizer.zip`**, or use this direct link:
+**[ai-tab-organizer.zip](https://github.com/Piyusinha/ai-tab-organizer/releases/latest/download/ai-tab-organizer.zip)**.
+
+<img src="docs/setup/1-release-assets.png" alt="Release assets: download ai-tab-organizer.zip, not Source code" width="760">
+
+> [!IMPORTANT]
+> Don't download **Source code (zip)**. That's the raw project and can't be loaded into Chrome.
+> `ai-tab-organizer-<version>.zip` is the same file as `ai-tab-organizer.zip` with the version in its name.
+
+### 2. Unzip it
+
+- **macOS:** double-click the zip.
+- **Windows:** right-click → **Extract All…**
+
+Move the extracted folder somewhere permanent, such as `Documents/ai-tab-organizer`. Chrome runs the
+extension from this folder, so don't delete it. The folder should contain `manifest.json`.
+
+### 3. Load it in Chrome
+
+1. Open **`chrome://extensions`** in the address bar.
+2. Turn on **Developer mode** (top-right).
+3. Click **Load unpacked** and select the folder from step 2.
+
+<img src="docs/setup/2-load-unpacked.png" alt="chrome://extensions with Developer mode on and Load unpacked" width="760">
+
+**AI Tab Organizer** appears in your extensions. Click the puzzle-piece icon in the toolbar and **pin** it.
+
+<img src="docs/setup/3-installed.png" alt="AI Tab Organizer installed" width="760">
+
+### 4. Connect a provider
+
+The settings page opens automatically (or right-click the icon → **Options**).
+
+1. **Pick a provider** from the dropdown (you can search it).
+2. **Paste your API key** and click **Test connection**. You should see **✓ Connected**.
+
+<img src="docs/setup/4-connect.png" alt="Settings: Vercel AI Gateway connected" width="760">
+
+| Provider | Get a key | Notes |
+|---|---|---|
+| OpenRouter | [openrouter.ai/settings/keys](https://openrouter.ai/settings/keys) | Easiest; pay with OpenRouter credits |
+| Vercel AI Gateway | [vercel.com → AI Gateway → API keys](https://vercel.com/dashboard/ai-gateway/api-keys) | Used in the demo |
+| Cloudflare Workers AI | [dash.cloudflare.com → API tokens](https://dash.cloudflare.com/profile/api-tokens) | Also needs your **account ID** |
+| TypeSafe | [console.typesafe.ai](https://console.typesafe.ai) | Direct from the makers of Jev |
+
+Add keys for more than one provider and leave **Use backups** on. If one provider is down, the extension switches to another automatically.
+
+### 5. Organize your tabs
+
+Click the extension icon → **Organize tabs**, or press **Alt+Shift+O**.
+
+<img src="docs/setup/5-organize.png" alt="Popup: Sorted 16 tabs into 9 folders" width="760">
+
+Your tabs are grouped into named, colored folders in the tab strip. Changed your mind? Click **Undo**.
+
+<img src="docs/setup/6-result.png" alt="Result: tabs sorted into Dev, News, Music, Learning, Video, AI, Travel, Reading, Shopping" width="760">
+
+### Updating
+
+Download the new `ai-tab-organizer.zip`, extract it **over the same folder** (replace the files), then click
+**↻ Reload** on the extension's card in `chrome://extensions`. Your settings and keys are kept.
+
+### Troubleshooting
+
+| Problem | Fix |
+|---|---|
+| *"Manifest file is missing or unreadable"* | You selected the wrong folder or downloaded **Source code**. Select the folder that contains `manifest.json`. |
+| Popup says **Not connected** | Open settings, paste a key and click **Test connection**. |
+| *"invalid API key"* | Copy the key again. For Cloudflare, also check the account ID. |
+| *"overloaded"* / *503* | The provider is busy. Try again, or add a second provider with **Use backups** on. |
+| Chrome warns about developer-mode extensions | That's expected for extensions loaded from a zip. Keep it enabled. |
+
+Also works in Edge, Brave and other Chromium browsers (`edge://extensions`, `brave://extensions`).
 
 ## Build from source
 
@@ -122,6 +206,7 @@ The settings page opens on first install. Choose a provider, paste your key and 
 | `npm run check` | Everything CI runs: typecheck, tests, store package. Run it before opening a PR |
 | `npm run test:e2e` | Opens 100 real tabs in Chrome for Testing and sorts them with real Jev (needs a key in `.env`) |
 | `npm run store-assets` | Renders store screenshots and the promo tile into `release/store/` |
+| `npm run demo` | Records the demo video/GIF with a real Chrome and real Jev (needs `VITE_AI_GATEWAY_API_KEY` in `.env`) → `release/demo/` |
 
 ### Optional: default keys for local builds
 
