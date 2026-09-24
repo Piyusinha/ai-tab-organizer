@@ -7,7 +7,17 @@ Tabs are classified by [Jev](https://docs.typesafe.ai), TypeSafe AI's decision m
 provider you choose: **OpenRouter**, **Vercel AI Gateway**, **Cloudflare Workers AI** or **TypeSafe**
 directly. You bring your own key; the extension has no backend.
 
-## Quick start
+## Install (no coding needed)
+
+1. Go to the [**latest release**](https://github.com/Piyusinha/ai-tab-organizer/releases/latest) and download `ai-tab-organizer-<version>.zip` under **Assets**.
+2. **Unzip it** and move the folder somewhere permanent. Chrome loads the extension from that folder, so don't delete it.
+3. Open `chrome://extensions`, turn on **Developer mode** (top right) and click **Load unpacked**.
+4. Select the extracted folder (the one containing `manifest.json`).
+5. Pin the extension from the puzzle-piece menu. In the settings page that opens, pick a provider, paste your API key and click **Test connection**.
+
+Click the icon → **Organize tabs**, or press **Alt+Shift+O**. To update, extract a newer zip over the same folder and click **↻ Reload** on the extension card.
+
+## Build from source
 
 Requirements: Node 24 (see `.nvmrc`) and Chrome.
 
@@ -81,8 +91,17 @@ docs/privacy.html privacy policy (served with GitHub Pages)
 4. **Create the item:** *New item* → upload the zip → fill in the tabs using `STORE_LISTING.md`.
 5. **Submit for review.** Reviews usually take a few days.
 
-**Updates:** bump `version` in `public/manifest.json` and `package.json` in a PR, merge it,
-run `npm run package` and upload the zip on the item's *Package* tab.
+## Releasing a new version
+
+1. In a PR, bump `version` in `public/manifest.json` and `package.json`, then merge it.
+2. Tag the merge commit and push the tag:
+   ```bash
+   git checkout main && git pull
+   git tag v1.1.0 && git push origin v1.1.0
+   ```
+3. The **Release** workflow checks the tag matches the manifest, runs the tests, builds the zip and publishes a
+   [GitHub Release](https://github.com/Piyusinha/ai-tab-organizer/releases) with the zip and install steps.
+4. For the Web Store, upload the same zip on the item's *Package* tab.
 
 ## License
 
